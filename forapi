@@ -1,6 +1,4 @@
-RoomFinder_API-backup/api/.
-
- Create admin_login.php
+RoomFinder_API-backup/api/ gawa ng file na admin_login.php
 
 
 <?php
@@ -34,7 +32,7 @@ if (!empty($data->email) && !empty($data->password)) {
 }
 ?>
 
-Create admin_register.php
+gawa din ng file na admin_register.php
 
 <?php
 require_once "../config/database.php";
