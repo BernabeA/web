@@ -1,0 +1,63 @@
+RoomFinder_API-backup/api/.
+
+ Create admin_login.php
+
+
+<?php
+require_once "../config/database.php";
+require_once "../config/jwt.php"; 
+
+header("Content-Type: application/json");
+
+$data = json_decode(file_get_contents("php://input"));
+
+if (!empty($data->email) && !empty($data->password)) {
+    $email = $data->email;
+    $password = $data->password;
+
+    $query = "SELECT * FROM admin WHERE email = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        if (password_verify($password, $row["password"])) {
+            $token = generate_jwt($row["id"], $row["email"]); 
+            echo json_encode(["token" => $token]);
+            exit;
+        }
+    }
+    echo json_encode(["error" => "Invalid credentials"]);
+} else {
+    echo json_encode(["error" => "Missing fields"]);
+}
+?>
+
+Create admin_register.php
+
+<?php
+require_once "../config/database.php";
+
+header("Content-Type: application/json");
+
+$data = json_decode(file_get_contents("php://input"));
+
+if (!empty($data->name) && !empty($data->email) && !empty($data->password)) {
+    $name = $data->name;
+    $email = $data->email;
+    $password = password_hash($data->password, PASSWORD_DEFAULT); 
+
+    $query = "INSERT INTO admin (name, email, password) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sss", $name, $email, $password);
+
+    if ($stmt->execute()) {
+        echo json_encode(["message" => "Admin registered successfully"]);
+    } else {
+        echo json_encode(["error" => "Signup failed"]);
+    }
+} else {
+    echo json_encode(["error" => "Missing fields"]);
+}
+?>
