@@ -98,6 +98,7 @@
             color: #1E90FF;
             text-decoration: none;
         }
+       .login-box .links a:hover {
             text-decoration: underline;
         }
     </style>
